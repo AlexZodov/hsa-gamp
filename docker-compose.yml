@@ -1,0 +1,34 @@
+version: "3.7"
+
+services:
+    hsa_gamp_server:
+        container_name: hsa_gamp_server
+        build: ./server
+        expose:
+            - 3000
+        ports:
+            - 0.0.0.0:9999:3000
+            - 0.0.0.0:9998:9249
+        command: npm run start:debug
+        volumes:
+            - ./server:/usr/src/app
+        networks:
+            hsa_gamp_net:
+                ipv4_address: 172.16.113.10
+    
+    hsa_gamp_redis:
+        container_name: hsa_gamp_redis
+        image: arm64v8/redis
+        ports:
+            - 9736:6379
+        networks:
+            hsa_gamp_net:
+                ipv4_address: 172.16.113.12
+
+networks:
+    hsa_gamp_net:
+        name: hsa_gamp_net
+        ipam:
+            driver: default
+            config:
+            - subnet: 172.16.113.0/24
